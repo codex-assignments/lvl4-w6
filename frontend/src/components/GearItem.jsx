@@ -18,6 +18,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
+import { useResources } from "../context/ResourceContext";
 
 const CATEGORIES = [
   "General",
@@ -29,12 +30,8 @@ const CATEGORIES = [
   "First Aid",
 ];
 
-export default function GearItem({
-  item,
-  onTogglePacked,
-  onUpdateGear,
-  onDeleteGear,
-}) {
+export default function GearItem({ item }) {
+  const { updateResource, deleteResource } = useResources();
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
     item_name: item.item_name,
@@ -48,27 +45,30 @@ export default function GearItem({
     setEditForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleToggle = (e) => {
+    updateResource(item.id, { is_packed: e.target.checked });
+  };
+
   const handleSave = async () => {
-    await onUpdateGear(item.id, {
+    await updateResource(item.id, {
       ...editForm,
       quantity: Number(editForm.quantity),
     });
     setIsEditing(false);
   };
 
+  const handleDelete = () => {
+    deleteResource(item.id);
+  };
+
   return (
     <Card
       variant="outlined"
-      sx={{
-        borderRadius: 2,
-        backgroundColor: item.is_packed ? "#f8fafc" : "#ffffff",
-        borderColor: item.is_packed ? "#cbd5e1" : "#e2e8f0",
-        transition: "all 0.2s ease",
-      }}
+      className={`gear-item-card ${item.is_packed ? "packed" : "unpacked"}`}
     >
-      <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
+      <CardContent className="gear-item-content">
         {isEditing ? (
-          //   while editing
+          /* editing */
           <Stack spacing={1.5}>
             <TextField
               size="small"
@@ -99,7 +99,7 @@ export default function GearItem({
                 label="Qty"
                 value={editForm.quantity}
                 onChange={handleEditChange}
-                sx={{ width: 90 }}
+                className="edit-qty-input"
               />
             </Stack>
             <TextField
@@ -110,7 +110,7 @@ export default function GearItem({
               onChange={handleEditChange}
               fullWidth
             />
-            <Stack direction="row" spacing={1} justifyContent="flex-end">
+            <Box className="edit-actions-row">
               <Button
                 size="small"
                 startIcon={<CancelIcon />}
@@ -127,59 +127,39 @@ export default function GearItem({
               >
                 Save
               </Button>
-            </Stack>
+            </Box>
           </Stack>
         ) : (
-          // display
-          <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+          /* display */
+          <Box className="gear-item-display-box">
             <Checkbox
               checked={item.is_packed}
-              onChange={(e) => onTogglePacked(item.id, e.target.checked)}
+              onChange={handleToggle}
               color="primary"
-              sx={{ p: 0.5, mt: 0.2 }}
+              className="gear-item-checkbox"
             />
 
-            <Box sx={{ flexGrow: 1 }}>
-              <Box
-                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}
-              >
+            <Box className="gear-item-details">
+              <Box className="gear-item-header">
                 <Typography
                   variant="subtitle1"
-                  sx={{
-                    fontWeight: 600,
-                    textDecoration: item.is_packed ? "line-through" : "none",
-                    color: item.is_packed ? "#64748b" : "#0f172a",
-                  }}
+                  className={`gear-item-title ${item.is_packed ? "packed" : ""}`}
                 >
                   {item.item_name}
                 </Typography>
                 <Chip
                   label={item.category}
                   size="small"
-                  sx={{
-                    fontSize: "0.7rem",
-                    height: 20,
-                    backgroundColor: "#e0e7ff",
-                    color: "#3730a3",
-                    fontWeight: 600,
-                  }}
+                  className="gear-item-chip"
                 />
               </Box>
 
-              <Typography variant="body2" sx={{ color: "#475569" }}>
+              <Typography variant="body2" className="gear-item-qty">
                 Quantity: <strong>{item.quantity}</strong>
               </Typography>
 
               {item.notes && (
-                <Typography
-                  variant="caption"
-                  sx={{
-                    display: "block",
-                    mt: 0.5,
-                    color: "#64748b",
-                    fontStyle: "italic",
-                  }}
-                >
+                <Typography variant="caption" className="gear-item-notes">
                   "{item.notes}"
                 </Typography>
               )}
@@ -196,7 +176,7 @@ export default function GearItem({
               <IconButton
                 size="small"
                 color="error"
-                onClick={() => onDeleteGear(item.id)}
+                onClick={handleDelete}
                 title="Delete item"
               >
                 <DeleteIcon fontSize="small" />

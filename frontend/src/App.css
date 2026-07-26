@@ -1,0 +1,201 @@
+/* Custom App-Wide Styles & Layout Overrides */
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f1f5f9;
+  font-family: 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #0f172a;
+}
+
+.app-container {
+  padding-top: 32px;
+  padding-bottom: 32px;
+}
+
+.app-header {
+  margin-bottom: 32px;
+  text-align: center;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 16px;
+}
+
+.app-title {
+  font-weight: 700 !important;
+  color: #1e40af;
+  letter-spacing: -0.025em;
+}
+
+.app-subtitle {
+  font-weight: 500 !important;
+  color: #4b5563;
+}
+
+.alert-margin {
+  margin-bottom: 24px !important;
+}
+
+/* Form Styles */
+.form-card {
+  margin-bottom: 24px !important;
+  border-radius: 8px !important;
+}
+
+.form-content {
+  padding: 24px !important;
+}
+
+.form-title {
+  margin-bottom: 16px !important;
+  font-weight: 600 !important;
+}
+
+.form-category-select {
+  flex: 2;
+}
+
+.form-quantity-input {
+  flex: 1;
+}
+
+.form-submit-btn {
+  margin-top: 8px !important;
+  padding-top: 9.6px !important;
+  padding-bottom: 9.6px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+}
+
+/* List & Progress Styles */
+.list-container {
+  margin-top: 24px;
+}
+
+.list-header-box {
+  margin-bottom: 16px;
+}
+
+.list-progress-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.list-progress-title {
+  font-weight: 600 !important;
+  color: #0f172a;
+}
+
+.list-progress-text {
+  font-weight: 600 !important;
+  color: #2563eb;
+}
+
+.list-progress-bar {
+  height: 8px !important;
+  border-radius: 4px !important;
+}
+
+.empty-list-paper {
+  padding: 32px !important;
+  text-align: center;
+  background-color: #f8fafc !important;
+  border-radius: 8px !important;
+}
+
+.empty-list-text {
+  color: #64748b;
+}
+
+.loading-text {
+  text-align: center;
+  color: #64748b;
+  padding-top: 32px;
+  padding-bottom: 32px;
+}
+
+/* Item Card Styles */
+.gear-item-card {
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+}
+
+.gear-item-card.unpacked {
+  background-color: #ffffff;
+  border-color: #e2e8f0 !important;
+}
+
+.gear-item-card.packed {
+  background-color: #f8fafc;
+  border-color: #cbd5e1 !important;
+}
+
+.gear-item-content {
+  padding: 16px !important;
+}
+
+.gear-item-content:last-child {
+  padding-bottom: 16px !important;
+}
+
+.gear-item-display-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.gear-item-checkbox {
+  padding: 4px !important;
+  margin-top: 1.6px !important;
+}
+
+.gear-item-details {
+  flex-grow: 1;
+}
+
+.gear-item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.gear-item-title {
+  font-weight: 600 !important;
+  color: #0f172a;
+}
+
+.gear-item-title.packed {
+  text-decoration: line-through;
+  color: #64748b;
+}
+
+.gear-item-chip {
+  font-size: 0.7rem !important;
+  height: 20px !important;
+  background-color: #e0e7ff !important;
+  color: #3730a3 !important;
+  font-weight: 600 !important;
+}
+
+.gear-item-qty {
+  color: #475569;
+}
+
+.gear-item-notes {
+  display: block;
+  margin-top: 4px;
+  color: #64748b;
+  font-style: italic;
+}
+
+.edit-qty-input {
+  width: 90px;
+}
+
+.edit-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

@@ -13,6 +13,7 @@ import {
   Box,
   Stack,
 } from "@mui/material";
+import { useResources } from "../context/ResourceContext";
 
 const CATEGORIES = [
   "General",
@@ -22,10 +23,10 @@ const CATEGORIES = [
   "Clothing",
   "Electronics",
   "First Aid",
-  "Lighting",
 ];
 
-export default function GearForm({ onGearAdded }) {
+export default function GearForm() {
+  const { addResource } = useResources();
   const [formData, setFormData] = useState({
     item_name: "",
     category: "General",
@@ -47,12 +48,11 @@ export default function GearForm({ onGearAdded }) {
     setLoading(true);
 
     try {
-      await onGearAdded({
+      await addResource({
         ...formData,
         quantity: Number(formData.quantity),
       });
 
-      // reset
       setFormData({
         item_name: "",
         category: "General",
@@ -67,14 +67,14 @@ export default function GearForm({ onGearAdded }) {
   };
 
   return (
-    <Card elevation={2} sx={{ mb: 3, borderRadius: 2 }}>
-      <CardContent sx={{ p: 3 }}>
-        <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 600 }}>
+    <Card elevation={2} className="form-card">
+      <CardContent className="form-content">
+        <Typography variant="h6" component="h2" className="form-title">
           Add Gear
         </Typography>
 
         {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
+          <Alert severity="error" className="alert-margin">
             {error}
           </Alert>
         )}
@@ -93,7 +93,11 @@ export default function GearForm({ onGearAdded }) {
             />
 
             <Stack direction="row" spacing={2}>
-              <FormControl fullWidth size="small" sx={{ flex: 2 }}>
+              <FormControl
+                fullWidth
+                size="small"
+                className="form-category-select"
+              >
                 <InputLabel id="category-label">Category</InputLabel>
                 <Select
                   labelId="category-label"
@@ -118,7 +122,7 @@ export default function GearForm({ onGearAdded }) {
                 onChange={handleChange}
                 slotProps={{ htmlInput: { min: 1 } }}
                 size="small"
-                sx={{ flex: 1 }}
+                className="form-quantity-input"
               />
             </Stack>
 
@@ -136,7 +140,7 @@ export default function GearForm({ onGearAdded }) {
               type="submit"
               variant="contained"
               disabled={loading}
-              sx={{ mt: 1, py: 1.2, fontWeight: 600, textTransform: "none" }}
+              className="form-submit-btn"
             >
               {loading ? "Adding..." : "Add Gear Item"}
             </Button>
