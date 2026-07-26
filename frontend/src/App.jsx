@@ -1,122 +1,99 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState, useEffect } from "react";
+import { Container, Typography, Box, Alert } from "@mui/material";
+import { gearApi } from "./api/gearApi";
+import GearForm from "./components/GearForm";
+import GearList from "./components/GearList";
+import "./App.css"; 
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [gear, setGear] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // read
+  const fetchGear = async () => {
+    try {
+      setLoading(true);
+      const data = await gearApi.getGear();
+      setGear(data);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // render on pageload
+  useEffect(() => {
+    fetchGear();
+  }, []);
+
+  // create
+  const handleAddGear = async (newItemData) => {
+    const createdItem = await gearApi.createGear(newItemData);
+    setGear((prev) => [createdItem, ...prev]);
+  };
+
+  // toggle packed or unpacked
+  const handleTogglePacked = async (id, is_packed) => {
+    const updatedItem = await gearApi.updateGear(id, { is_packed });
+    setGear((prev) =>
+      prev.map((item) => (item.id === id ? updatedItem : item)),
+    );
+  };
+
+  // update
+  const handleUpdateGear = async (id, updatedFields) => {
+    const updatedItem = await gearApi.updateGear(id, updatedFields);
+    setGear((prev) =>
+      prev.map((item) => (item.id === id ? updatedItem : item)),
+    );
+  };
+
+  // delete
+  const handleDeleteGear = async (id) => {
+    try {
+      await gearApi.deleteGear(id);
+      setGear((prev) => prev.filter((item) => item.id !== id));
+    } catch (err) {
+      alert(`Error deleting gear: ${err.message}`);
+    }
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
+    <Container maxWidth="md" className="app-container" sx={{ py: 4 }}>
+      <Box
+        component="header"
+        className="app-header"
+        sx={{ mb: 4, textAlign: "center" }}
+      >
+        <Typography
+          variant="h3"
+          component="h1"
+          className="app-title"
+          sx={{ fontWeight: 700, color: "#1e40af" }}
         >
-          Count is {count}
-        </button>
-      </section>
+          Gear Check
+        </Typography>
+      </Box>
+{/* display error */}
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {error}
+        </Alert>
+      )}
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      <main>
+        <GearForm onGearAdded={handleAddGear} />
+        <GearList
+          gear={gear}
+          onTogglePacked={handleTogglePacked}
+          onUpdateGear={handleUpdateGear}
+          onDeleteGear={handleDeleteGear}
+          loading={loading}
+        />
+      </main>
+    </Container>
+  );
 }
-
-export default App

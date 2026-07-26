@@ -24,9 +24,11 @@ def get_resources():
 
 @app.post("/api/gear")
 def create_gear():
-    data = request.get_json()
+    data = request.get_json() or {}
+    if not data.get("item_name"):
+        return {"error": "item_name is required"}, 400
     # build dictionary/payload to be posted to supabase
-    newGEAR = {
+    newGear = {
         "item_name": data.get("item_name"),
         "category": data.get("category", "General"),
         "quantity": data.get("quantity", 1),
@@ -40,17 +42,20 @@ def create_gear():
 # update gear
 @app.put("/api/gear/<int:gear_id>")
 def update_gear(gear_id):
-    data = request.get_json()
+    data = request.get_json() or {}
     updatedGear = {}
-
     if "item_name" in data: 
-        update_gear["item_name"] = data ["item_name"]
+        updatedGear["item_name"] = data ["item_name"]
     if "category" in data: 
-        update_gear["category"] = data ["category"]
+        updatedGear["category"] = data ["category"]
     if "quantity" in data: 
-        update_gear["quantity"] = data ["quantity"]
+        # set data type to int
+        updatedGear["quantity"] = int(data ["quantity"])
+    if "is_packed" in data: 
+        # need to use boolean
+        updatedGear["is_packed"] = bool(data ["is_packed"])
     if "notes" in data: 
-        update_gear["notes"] = data ["notes"]
+        updatedGear["notes"] = data ["notes"]
 
     res = (
         supabase.table("gear").update(updatedGear).eq("id", gear_id).execute()
@@ -61,7 +66,7 @@ def update_gear(gear_id):
 
     return res.data[0], 200
 
-@app.delete("/api/gear/<int:gear_id")
+@app.delete("/api/gear/<int:gear_id>")
 def delete_gear(gear_id):
     supabase.table("gear").delete().eq("id", gear_id).execute()
     return {"message": "Item has been deleted."}, 200
